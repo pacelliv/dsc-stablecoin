@@ -1,0 +1,27 @@
+# Default ignores
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+
+# Build artifacts
+**/dist
+**/build
+**/out
+**/cache
+**/artifacts
+**/typechain-types
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Special cases
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
+
+# Foundry specific
+contracts/broadcast/
+contracts/lib/

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext", // or "Node16" (both work)
+    "moduleResolution": "NodeNext", // or "Node16"
+    "outDir": "./dist",
+    "rootDir": "./scripts", // Ensure this matches where your TS files are
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": "./scripts"
+  },
+  "include": ["scripts/**/*"], // Adjusted if your scripts are in `src/`
+  "exclude": ["node_modules", "lib", "tests", "out", "cache", ".vscode", ".github"]
+}

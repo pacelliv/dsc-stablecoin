@@ -1,0 +1,25 @@
+# General
+.DS_Store
+*.local
+*.log
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment
+.env*
+.password*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Dependency directories
+**/node_modules/
+
+package-lock.json
+
+TODOS.md

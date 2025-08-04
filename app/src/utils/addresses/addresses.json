@@ -1,0 +1,12 @@
+{
+  "31337": {
+    "DSCEngine": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+    "DSC": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+    "ethUsdPriceFeed": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  },
+  "11155111": {
+    "DSCEngine": "0x281e0cb79f61c6095524b570b66ebc2240b44c8a",
+    "DSC": "0xd01c4b2440c091a05e2b18a8b6469afcc603d530",
+    "ethUsdPriceFeed": "0x694AA1769357215DE4FAC081bf1f309aDC325306"
+  }
+}

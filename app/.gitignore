@@ -1,0 +1,13 @@
+# Vite/Node specific
+dist
+dist-ssr
+.env
+.env.*
+.vercel
+.env.local
+.env.development
+.env.test
+.env.production
+
+.vite/
+*.env

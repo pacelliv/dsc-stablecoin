@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- CSS -->
+    <link rel="stylesheet" href="./src/css/index.css" />
+    <!-- Metadata -->
+    <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DSC: Mint stablecoins by depositing ETH</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Error Modal -->
+      <dialog id="error-modal" class="error-modal">
+        <header>
+          <img src="/warning-icon.svg" alt="Warning" class="warning-icon" width="25" height="25" />
+          <h3>Error</h3>
+        </header>
+        <div class="error-container">
+          <p id="error-msg"></p>
+          <button
+            id="close-error-modal-btn"
+            class="close-error-modal-btn"
+            aria-label="Close."
+            data-modal="error-modal"
+            autofocus
+          >
+            Close
+          </button>
+        </div>
+      </dialog>
+
+      <dialog id="transaction-modal" class="transaction-modal">
+        <div class="transaction-modal-wrapper">
+          <header>
+            <h3 class="transaction-modal-title">Transaction</h3>
+            <div class="description-container">
+              <div id="current-transaction">
+                <h3>Transaction Type</h3>
+                <p id="transaction-type"></p>
+              </div>
+              <div>
+                <h3>Transaction Status</h3>
+                <p id="transaction-status"></p>
+              </div>
+            </div>
+            <div id="action" class="action">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <g fill="none">
+                  <path
+                    d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2m0 13a1 1 0 1 0 0 2a1 1 0 0 0 0-2m0-9a1 1 0 0 0-.993.883L11 7v6a1 1 0 0 0 1.993.117L13 13V7a1 1 0 0 0-1-1"
+                  />
+                </g>
+              </svg>
+              <p>Action required: <span id="action-required">Please, fill the form</span></p>
+            </div>
+          </header>
+
+          <div id="transaction-container">
+            <div class="stats-container">
+              <div class="current-stat margin-bottom">
+                <h3>Metric</h3>
+                <h3>Value</h3>
+              </div>
+
+              <div class="current-stat">
+                <p>Collateral</p>
+                <p class="amount" id="col-amount"></p>
+              </div>
+
+              <div class="current-stat">
+                <p>Debt</p>
+                <p class="amount" id="debt-amount"></p>
+              </div>
+
+              <div class="current-stat">
+                <p>Health Factor</p>
+                <p class="amount" id="health-amount"></p>
+              </div>
+            </div>
+
+            <form id="transaction-form" class="transaction-form">
+              <p id="transaction-form-error-msg" class="transaction-form-error-msg"></p>
+
+              <div class="option-container">
+                <label for="option"><span id="tx-action"></span> in the same transaction</label>
+                <input type="checkbox" name="option" id="option" />
+              </div>
+
+              <label class="amount-input-label" for="input">Enter <span id="primary-span"></span> amount:</label>
+              <input
+                type="number"
+                name="primary-amount-input"
+                id="primary-amount-input"
+                class="amount-input"
+                aria-labelledby="amount-input-label"
+                step="any"
+                required
+              />
+
+              <label id="secondary-label" class="amount-input-label" for="input"
+                >Enter <span id="secondary-span"></span> amount:</label
+              >
+              <input
+                type="number"
+                name="secondary-amount-input"
+                id="secondary-amount-input"
+                class="amount-input"
+                aria-labelledby="amount-input-label"
+                step="any"
+              />
+
+              <div class="transaction-modal-buttons-container">
+                <button id="cancel-btn" class="cancel-btn" name="close-form-btn" data-modal="transaction-modal">
+                  <span>Cancel</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path
+                      fill="currentColor"
+                      d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"
+                    />
+                  </svg>
+                </button>
+                <button id="execute-btn" class="execute-btn" name="submit-form-btn" disabled>
+                  <span>Execute</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                    <defs>
+                      <mask id="ipSTransaction0">
+                        <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+                          <path
+                            fill="#fff"
+                            stroke="#fff"
+                            d="M39 6H9a3 3 0 0 0-3 3v30a3 3 0 0 0 3 3h30a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3"
+                          />
+                          <path stroke="#000" d="m21 31l5 4l8-10M14 15h20m-20 8h8" />
+                        </g>
+                      </mask>
+                    </defs>
+                    <path fill="currentColor" d="M0 0h48v48H0z" mask="url(#ipSTransaction0)" />
+                  </svg>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
+      <div id="root">
+        <header>
+          <div class="header-content" id="header-content">
+            <a href="/" id="logo" class="logo">
+              <img class="logo-icon" src="favicon.svg" alt="DSC logo" width="30" height="30" />
+              <span id="logo-text" class="logo-text">DSC</span>
+            </a>
+
+            <div id="connect-container" class="connect-container">
+              <img class="connect-logo" src="/eth-logo.svg" alt="Ethereum blockchain logo." />
+
+              <button id="connect-btn" class="connect-btn">Connect wallet</button>
+            </div>
+          </div>
+        </header>
+
+        <main>
+          <section class="hero">
+            <div class="hero-msg-container">
+              <h1 class="hero-title">Mint DSC by using your ether as collateral</h1>
+              <p class="hero-msg">
+                Maximize your ETH balance to
+                <span class="underline">generate Decentralized Stablecoin</span>. Access liquidity by depositing ETH
+                into the engine and mint DSC at any time, with no slippage or platform fees.
+              </p>
+              <a href="#dashboard" class="create-btn">
+                <svg class="arrow-up" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24">
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M12 21V3m0 0l8.5 8.5M12 3l-8.5 8.5"
+                  />
+                </svg>
+                Open a vault
+              </a>
+            </div>
+
+            <ul id="hero-statistics" class="hero-statistics" aria-label="protocol statistics." aria-live="polite">
+              <li class="stat tvl-usd" aria-busy="true">
+                <span class="stat-caption">TVL (USD)</span>
+                <div class="small-loader" aria-hidden="true"></div>
+              </li>
+              <li class="stat tvl-eth" aria-busy="true">
+                <span class="stat-caption">TVL (ETH)</span>
+                <div class="small-loader" aria-hidden="true"></div>
+              </li>
+              <li class="stat minted" aria-busy="true">
+                <span class="stat-caption">DSC Supply</span>
+                <div class="small-loader" aria-hidden="true"></div>
+              </li>
+              <li class="stat col-ratio" aria-busy="true">
+                <span class="stat-caption">Collateralization Ratio</span>
+                <div class="small-loader" aria-hidden="true"></div>
+              </li>
+              <li class="stat liq-ratio" aria-busy="true">
+                <span class="stat-caption">Liquidation Ratio</span>
+                <div class="small-loader" aria-hidden="true"></div>
+              </li>
+              <li class="stat liq-vol" aria-busy="true">
+                <span class="stat-caption">Liquidation Volume (24h)</span>
+                <div class="small-loader" aria-hidden="true"></div>
+              </li>
+            </ul>
+          </section>
+
+          <section class="description-section">
+            <div class="description-items-container">
+              <div class="description-item decentralized">
+                <h3 class="description-title">Decentralized</h3>
+                <img src="/nodes-line-icon.svg" alt="nodes" class="description-icon" width="60" height="60" />
+              </div>
+              <div class="description-item pegged">
+                <h3 class="description-title">USD-Pegged</h3>
+                <img src="/dollar-icon.svg" alt="dollar" class="description-icon" width="60" height="60" />
+              </div>
+              <div class="description-item overcollateralized">
+                <h3 class="description-title">Overcollateralized</h3>
+                <img src="/money-bag-icon.svg" alt="money bag" class="description-icon" width="60" height="60" />
+              </div>
+              <div class="description-item ether">
+                <h3 class="description-title">Backed by ETH</h3>
+                <img src="/ethereum-icon.svg" alt="ether" class="description-icon" width="60" height="60" />
+              </div>
+            </div>
+          </section>
+
+          <section id="dashboard" class="dashboard">
+            <div class="dashboard-connect-container">
+              <h3 class="dashboard-connect-title">Your wallet is not connected</h3>
+              <p class="dashboard-connect-msg">Please, connect your wallet to proceed</p>
+              <button id="dashboard-connect-btn" class="connect-btn inverted">Connect wallet</button>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+    <script type="module" src="/src/index.ts"></script>
+  </body>
+</html>
